@@ -7,6 +7,8 @@ requerimientos 1:
 -El numero de documento puede ser alfanumerico pero no puede ser vacio --checkEmpty
 -El numero de documento no puede ser repetido --documentExist
 -El nombre no puede ser vacio funcion --checkEmpty
+-Despues de que agregue todos los datos preguntar si los datos son correctos, si lo son agregar producto
+si no lo son borrar y volver a pedir los datos (Dar la opcion de volver al menu principal desde aqui)
 
 
 
@@ -17,6 +19,8 @@ del numero de documento o el numero de cuenta.
 requerimientos 2:
 -El numero de documento de la cuenta a la que se ingresa debe existir --documentExist
 -El dinero a ingresar a la cuenta no puede ser negativo y tiene que ser un numero --moneyNegative --isNan
+-Despues de que agregue todos los datos preguntar si los datos son correctos, si lo son agregar producto
+si no lo son borrar y volver a pedir los datos (Dar la opcion de volver al menu principal desde aqui)
 
 
 
@@ -27,7 +31,10 @@ si el dinero consignado es suficiente para el retiro.
 requerimientos 3:
 -Para realizar el movimiento se debe autenticar la cuenta
 -El numero de documento de la cuenta a la que se retira debe existir --documentExist
--El dinero a ingresar a la cuenta no puede ser negativo y tiene que ser un numero --moneyNegative --isNan
+-El dinero a retirarar de la cuenta no puede ser negativo y tiene que ser un numero --moneyNegative --isNan
+-Verificar si la cuenta tiene suficiente dinero para el retiro --hasMoney
+-Despues de que agregue todos los datos preguntar si los datos son correctos, si lo son agregar producto
+si no lo son borrar y volver a pedir los datos (Dar la opcion de volver al menu principal desde aqui)
 
 
 4 Pagar servicios:
@@ -41,6 +48,9 @@ requerimientos 4:
 -El numero de documento de la cuenta a la que se retira debe existir --documentExist
 -El servicio a pagar debe generar un movimiento
 -El dinero a ingresar a la cuenta no puede ser negativo y tiene que ser un numero --moneyNegative --isNan
+-Verificar si la cuenta tiene suficiente dinero para el retiro --hasMoney
+-Despues de que agregue todos los datos preguntar si los datos son correctos, si lo son agregar producto
+si no lo son borrar y volver a pedir los datos (Dar la opcion de volver al menu principal desde aqui)
 
 
 5 Mostrar movimientos bancarios:
