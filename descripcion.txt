@@ -1,0 +1,58 @@
+1: Crear una cuenta bancaria:
+El usuario podra registrarse con el numero de documento y
+el nombre ademas de asignar la clave. 
+El programa debera asignar un numero de cuenta.
+
+requerimientos 1:
+-El numero de documento puede ser alfanumerico pero no puede ser vacio --checkEmpty
+-El numero de documento no puede ser repetido --documentExist
+-El nombre no puede ser vacio funcion --checkEmpty
+
+
+
+2: Consignar dinero a una cuenta:
+El usuario debera poder consignar dinero a una cuenta por medio 
+del numero de documento o el numero de cuenta.
+
+requerimientos 2:
+-El numero de documento de la cuenta a la que se ingresa debe existir --documentExist
+-El dinero a ingresar a la cuenta no puede ser negativo y tiene que ser un numero --moneyNegative --isNan
+
+
+
+3 Retirar dinero:
+El usuario debera poder retirar dinero. El programa debe validar 
+si el dinero consignado es suficiente para el retiro.
+
+requerimientos 3:
+-Para realizar el movimiento se debe autenticar la cuenta
+-El numero de documento de la cuenta a la que se retira debe existir --documentExist
+-El dinero a ingresar a la cuenta no puede ser negativo y tiene que ser un numero --moneyNegative --isNan
+
+
+4 Pagar servicios:
+El programa debera mostrar un menu adicional donde muestra las opciones:
+Energia, Agua, Gas. El usuario registrara la referencia del servicio a pagar
+y el programa debe descontar el dinero de la cuenta de este.
+
+
+requerimientos 4:
+-Para realizar el movimiento se debe autenticar la cuenta
+-El numero de documento de la cuenta a la que se retira debe existir --documentExist
+-El servicio a pagar debe generar un movimiento
+-El dinero a ingresar a la cuenta no puede ser negativo y tiene que ser un numero --moneyNegative --isNan
+
+
+5 Mostrar movimientos bancarios:
+El programa debera mostrar la lista de todos los movimientos 
+bancarios que haya hecho el usuario en su cuenta.
+
+
+requerimientos 5:
+-Para realizar el movimiento se debe autenticar la cuenta
+-El numero de documento de la cuenta a la que se retira debe existir --documentExist
+-El servicio a pagar debe generar un movimiento
+-El dinero a ingresar a la cuenta no puede ser negativo y tiene que ser un numero --moneyNegative --isNan
+
+
+Para los puntos 3, 4 y 5 el usuario debera autenticarse con el numero de cuenta y clave
