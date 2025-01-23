@@ -41,21 +41,30 @@ Elija una opcion a realizar:
 
     var opc = Number(prompt(menu))
 
+    let jsonObj = JSON.stringify(usuarios, 4)
+
     switch(opc){
         case 1:
             console.log("(1). Crear una cuenta bancaria")
             crearCuenta()
 
-            const jsonObj = JSON.stringify(usuarios, 4)
-            console.log(jsonObj)
+            jsonObj = JSON.stringify(usuarios, 4)
+            console.log(usuarios)
             break
         case 2:
             console.log("(2). Consignar dinero a una cuenta")
             consignarDinero()
 
+            jsonObj = JSON.stringify(usuarios, 4)
+            console.log(jsonObj)
+
             break
         case 3:
             console.log("(3). Retirar dinero")
+            retirarDinero()
+
+            jsonObj = JSON.stringify(usuarios, 4)
+            console.log(jsonObj)
             break
         case 4:
             console.log("(4). Pagar servicios")
@@ -100,6 +109,7 @@ function crearCuenta() {
 
 }
 
+
 function consignarDinero() {
 
     const menuConsignar = `
@@ -113,25 +123,25 @@ function consignarDinero() {
 Elija una opcion a realizar: 
 `
 
+    let confirmacion = ``
+
     let opcConsignar = Number(prompt(menuConsignar))
+
+    let usuario = 0
+    let dineroIngresar = 0
 
     switch(opcConsignar){
         case 1:
             console.log("(1). Consignar usando numero de Documento")
 
-            
-            break
-        case 2:
-            console.log("(2). Consignar usando numero de Cuenta")
+            const cedulaBuscada = Number(prompt("Digite el numero de la cuenta a la que desea consignar: "))
 
-            const nCuentaBuscado = Number(prompt("Digite el numero de la cuenta a la que desea consignar: "))
-
-            const usuario = usuarios.find(
-                elemento => elemento.nCuenta == nCuentaBuscado)
+            usuario = usuarios.find(
+                elemento => elemento.cedula == cedulaBuscada)
             
-            const dineroIngresar = Number(prompt("Digite la cantidad de dinero a consignar: "))
+            dineroIngresar = Number(prompt("Digite la cantidad de dinero a consignar: "))
             
-            const confirmacion = `
+            confirmacion = `
                 Confirma los datos ingresados?
 
                 Dinero a ingresar: ${dineroIngresar}
@@ -141,9 +151,37 @@ Elija una opcion a realizar:
 
             if (window.confirm(confirmacion)) {
 
-                usuarios.dinero += dineroIngresar
+                usuario.dinero += dineroIngresar
 
             }
+            
+            break
+        case 2:
+            console.log("(2). Consignar usando numero de Cuenta")
+
+            const nCuentaBuscado = Number(prompt("Digite el numero de la cuenta a la que desea consignar: "))
+
+            usuario = usuarios.find(
+                elemento => elemento.nCuenta == nCuentaBuscado)
+            
+            dineroIngresar = Number(prompt("Digite la cantidad de dinero a consignar: "))
+
+            confirmacion = `
+                Confirma los datos ingresados?
+
+                Dinero a ingresar: ${dineroIngresar}
+                Numero de cuenta: ${usuario.nCuenta}
+                Documento de propietario de la cuenta:  ${usuario.cedula}
+                `
+            
+
+            if (window.confirm(confirmacion)) {
+
+                usuario.dinero += dineroIngresar
+
+            }
+
+            
             
             break
         case 0:
@@ -151,6 +189,48 @@ Elija una opcion a realizar:
         default:
             window.alert("la opcion ingresada no es valida, ingrese un numero entre 0 y 2")        
         }
+}
+
+
+function retirarDinero() {
+
+    let confirmacion = ``
+
+    let usuario = 0
+    let dineroRetirar = 0
+
+    const nCuentaBuscado = Number(prompt("Digite el numero de la cuenta: "))
+    const claveBuscada = prompt("Digite la clave de la cuenta: ")
+
+    usuario = autenticacion(nCuentaBuscado, claveBuscada)
+
+    dineroRetirar = Number(prompt("Digite la cantidad de dinero a retirar: "))
+
+    confirmacion = `
+                Confirma los datos ingresados?
+
+                Dinero a retirar: ${dineroRetirar}
+                Numero de cuenta: ${usuario.nCuenta}
+                Documento de propietario de la cuenta:  ${usuario.cedula}
+                `
+            
+
+            if (window.confirm(confirmacion)) {
+
+                usuario.dinero -= dineroRetirar
+
+            }
+
+
+}
+
+function autenticacion(nCuenta, clave) {
+
+    let usuario = usuarios.find(
+        elemento => (elemento.nCuenta == nCuenta) && (elemento.clave == clave))
+
+    return usuario
+
 }
 
 // // Funciones requeridas para leer y buscar usuario en un archivo json
