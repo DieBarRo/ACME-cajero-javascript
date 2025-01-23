@@ -68,6 +68,10 @@ Elija una opcion a realizar:
             break
         case 4:
             console.log("(4). Pagar servicios")
+            pagoServicios()
+
+            jsonObj = JSON.stringify(usuarios, 4)
+            console.log(jsonObj)
             break
         case 5:
             console.log("(5). Mostrar movimientos bancarios")
@@ -134,7 +138,7 @@ Elija una opcion a realizar:
         case 1:
             console.log("(1). Consignar usando numero de Documento")
 
-            const cedulaBuscada = Number(prompt("Digite el numero de la cuenta a la que desea consignar: "))
+            const cedulaBuscada = Number(prompt("Digite la cedula de la cuenta a la que desea consignar: "))
 
             usuario = usuarios.find(
                 elemento => elemento.cedula == cedulaBuscada)
@@ -151,7 +155,7 @@ Elija una opcion a realizar:
 
             if (window.confirm(confirmacion)) {
 
-                usuario.dinero += dineroIngresar
+                transaccion(usuario, dineroIngresar, retiro=false)
 
             }
             
@@ -177,11 +181,10 @@ Elija una opcion a realizar:
 
             if (window.confirm(confirmacion)) {
 
-                usuario.dinero += dineroIngresar
+                transaccion(usuario, dineroIngresar, retiro=false)
 
             }
 
-            
             
             break
         case 0:
@@ -215,14 +218,133 @@ function retirarDinero() {
                 `
             
 
-            if (window.confirm(confirmacion)) {
+    if (window.confirm(confirmacion)) {
 
-                usuario.dinero -= dineroRetirar
+        transaccion(usuario, dineroRetirar)
 
-            }
+    }
 
 
 }
+
+
+function pagoServicios() {
+
+    const menuServicios= `
+--------------------------------------------
+-------------MENU SERVICIOS-----------------
+--------------------------------------------
+(1). Pagar recibos de Energia
+(2). Pagar recibos de Agua
+(3). Pagar recibos de Gas
+(0). Volver a menu principal
+
+Elija una opcion a realizar: 
+`
+
+    let confirmacion = ``
+
+    let opcServicios = Number(prompt(menuServicios))
+
+    let usuario = 0
+    let dineroPago = 0
+    let numeroReferencia = 0
+    let servicio = ""
+
+    const nCuentaBuscado = Number(prompt("Digite el numero de la cuenta: "))
+    const claveBuscada = prompt("Digite la clave de la cuenta: ")
+
+    usuario = autenticacion(nCuentaBuscado, claveBuscada)
+
+    switch(opcServicios){
+        case 1:
+            console.log("(1). Pago recibo de Energia")
+
+            servicio = "Energia"
+            dineroPago = Number(prompt("Digite la cantidad de dinero a pagar: "))
+            numeroReferencia = Number(prompt("Digite el numero de referencia del servicio: "))
+
+
+            confirmacion = `
+                        Confirma los datos ingresados?
+
+                        Dinero a pagar: ${dineroPago}
+                        Servicio a pagar: ${servicio}
+                        Numero de referencia del servicio:  ${numeroReferencia}
+                        `            
+
+            if (window.confirm(confirmacion)) {
+
+                transaccion(usuario, dineroPago)
+
+            }
+            
+            break
+        case 2:
+            console.log("(2). Pago recibo de Agua")
+
+            servicio = "Agua"
+            dineroPago = Number(prompt("Digite la cantidad de dinero a pagar: "))
+            numeroReferencia = Number(prompt("Digite el numero de referencia del servicio: "))
+
+
+            confirmacion = `
+                        Confirma los datos ingresados?
+
+                        Dinero a pagar: ${dineroPago}
+                        Servicio a pagar: ${servicio}
+                        Numero de referencia del servicio:  ${numeroReferencia}
+                        `           
+
+            if (window.confirm(confirmacion)) {
+
+                transaccion(usuario, dineroPago)
+
+            }
+            
+            break
+        
+        case 3:
+            console.log("(3). Pago recibo de Gas")
+
+            servicio = "Gas"
+            dineroPago = Number(prompt("Digite la cantidad de dinero a pagar: "))
+            numeroReferencia = Number(prompt("Digite el numero de referencia del servicio: "))
+
+
+            confirmacion = `
+                        Confirma los datos ingresados?
+
+                        Dinero a pagar: ${dineroPago}
+                        Servicio a pagar: ${servicio}
+                        Numero de referencia del servicio:  ${numeroReferencia}
+                        `
+                    
+            if (window.confirm(confirmacion)) {
+
+                transaccion(usuario, dineroPago)
+
+            }
+            
+            break
+        case 0:
+            break
+        default:
+            window.alert("la opcion ingresada no es valida, ingrese un numero entre 0 y 3")        
+        }
+}
+
+// agregar las validaciones de numeros y negativos aqui
+function transaccion(usuario, dinero, retiro = true) {
+
+    if (retiro) {
+        usuario.dinero -= dinero
+    } else {
+        usuario.dinero += dinero
+    }
+}
+
+
 
 function autenticacion(nCuenta, clave) {
 
