@@ -1,24 +1,26 @@
 
 // declaracion de objetos json para el manejo de usuarios y movimientos
 
-const usuarios = {
-    1010: {
+const usuarios = [
+    {   
+        cedula: "1010",
         nombre: "diego",
         clave: "123",
         nCuenta: 1,
         dinero: 0,
     },
-    2020: {
+    {   
+        cedula: "2020",
         nombre: "felipe",
         clave: "456",
         nCuenta: 2,
         dinero: 0,
     },
-}
+]
 
-// const usuarios = {
+// const usuarios = [
 
-// }
+// ]
 
 
 // menu de inicio
@@ -37,7 +39,7 @@ do {
 Elija una opcion a realizar: 
 `
 
-    let opc = Number(prompt(menu))
+    var opc = Number(prompt(menu))
 
     switch(opc){
         case 1:
@@ -87,12 +89,13 @@ function crearCuenta() {
 
     if (window.confirm(confirmacion)) {
 
-        usuarios[cedula] = {
-                nombre: nombre,
-                clave: clave,
-                nCuenta: nCuenta,
-                dinero: 0,
-            }
+        usuarios.push({
+            cedula: cedula,
+            nombre: nombre,
+            clave: clave,
+            nCuenta: nCuenta,
+            dinero: 0,
+        }) 
     }
 
 }
@@ -110,9 +113,9 @@ function consignarDinero() {
 Elija una opcion a realizar: 
 `
 
-    let opc = Number(prompt(menuConsignar))
+    let opcConsignar = Number(prompt(menuConsignar))
 
-    switch(opc){
+    switch(opcConsignar){
         case 1:
             console.log("(1). Consignar usando numero de Documento")
 
@@ -121,10 +124,27 @@ Elija una opcion a realizar:
         case 2:
             console.log("(2). Consignar usando numero de Cuenta")
 
-            const nCuentaBuscado = prompt("Digite el numero de la cuenta a la que desea consignar: ")
+            const nCuentaBuscado = Number(prompt("Digite el numero de la cuenta a la que desea consignar: "))
 
             const usuario = usuarios.find(
-                elemento => elemento.nombre == nCuentaBuscado)
+                elemento => elemento.nCuenta == nCuentaBuscado)
+            
+            const dineroIngresar = Number(prompt("Digite la cantidad de dinero a consignar: "))
+            
+            const confirmacion = `
+                Confirma los datos ingresados?
+
+                Dinero a ingresar: ${dineroIngresar}
+                Numero de cuenta: ${usuario.nCuenta}
+                Documento de propietario de la cuenta:  ${usuario.cedula}
+                `
+
+            if (window.confirm(confirmacion)) {
+
+                usuarios.dinero += dineroIngresar
+
+            }
+            
             break
         case 0:
             break
