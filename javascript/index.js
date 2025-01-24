@@ -22,6 +22,21 @@ const usuarios = [
 
 // ]
 
+const movimientos = [
+    {
+        nCuenta: 1,
+        movimientos: []
+    },
+    {
+        nCuenta: 2,
+        movimientos: []
+    }
+]
+
+// const movimientos = [
+
+// ]
+
 
 // menu de inicio
 do {
@@ -41,40 +56,50 @@ Elija una opcion a realizar:
 
     var opc = Number(prompt(menu))
 
-    let jsonObj = JSON.stringify(usuarios, 4)
-
+    // let jsonObj = JSON.stringify(usuarios, 4)
+    // let jsonMovimientos = JSON.stringify(movimientos, 4)
+    
     switch(opc){
         case 1:
             console.log("(1). Crear una cuenta bancaria")
             crearCuenta()
 
-            jsonObj = JSON.stringify(usuarios, 4)
-            console.log(usuarios)
+            // jsonObj = JSON.stringify(usuarios, 4)
+            // jsonMovimientos = JSON.stringify(movimientos, 4)
+            // console.log(jsonObj, jsonMovimientos)
             break
         case 2:
             console.log("(2). Consignar dinero a una cuenta")
             consignarDinero()
 
-            jsonObj = JSON.stringify(usuarios, 4)
-            console.log(jsonObj)
+            // jsonObj = JSON.stringify(usuarios, 4)
+            // jsonMovimientos = JSON.stringify(movimientos, 4)
+            // console.log(jsonObj, jsonMovimientos)
 
             break
         case 3:
             console.log("(3). Retirar dinero")
             retirarDinero()
 
-            jsonObj = JSON.stringify(usuarios, 4)
-            console.log(jsonObj)
+            // jsonObj = JSON.stringify(usuarios, 4)
+            // jsonMovimientos = JSON.stringify(movimientos, 4)
+            // console.log(jsonObj, jsonMovimientos)
             break
         case 4:
             console.log("(4). Pagar servicios")
             pagoServicios()
 
-            jsonObj = JSON.stringify(usuarios, 4)
-            console.log(jsonObj)
+            // jsonObj = JSON.stringify(usuarios, 4)
+            // jsonMovimientos = JSON.stringify(movimientos, 4)
+            // console.log(jsonObj, jsonMovimientos)
             break
         case 5:
             console.log("(5). Mostrar movimientos bancarios")
+            mostrarMovimientos()
+
+            // jsonObj = JSON.stringify(usuarios, 4)
+            // jsonMovimientos = JSON.stringify(movimientos, 4)
+            // console.log(jsonObj, jsonMovimientos)
             break
         case 0:
             window.alert("Cerrando programa")
@@ -108,7 +133,12 @@ function crearCuenta() {
             clave: clave,
             nCuenta: nCuenta,
             dinero: 0,
-        }) 
+        })
+        
+        movimientos.push({
+            nCuenta: nCuenta,
+            movimientos: [],
+        })
     }
 
 }
@@ -132,7 +162,11 @@ Elija una opcion a realizar:
     let opcConsignar = Number(prompt(menuConsignar))
 
     let usuario = 0
+    let movimientosUsuario = 0
     let dineroIngresar = 0
+
+    let tipoMovimiento = "Consignar dinero"
+    let descripcionMovimiento = "Consignacion de dinero a la cuenta de un usuario"
 
     switch(opcConsignar){
         case 1:
@@ -142,6 +176,9 @@ Elija una opcion a realizar:
 
             usuario = usuarios.find(
                 elemento => elemento.cedula == cedulaBuscada)
+
+            movimientosUsuario = movimientos.find(
+                elemento => elemento.nCuenta == usuario.nCuenta).movimientos
             
             dineroIngresar = Number(prompt("Digite la cantidad de dinero a consignar: "))
             
@@ -156,6 +193,8 @@ Elija una opcion a realizar:
             if (window.confirm(confirmacion)) {
 
                 transaccion(usuario, dineroIngresar, retiro=false)
+                escrituraMovimientos(movimientosUsuario, tipoMovimiento, descripcionMovimiento, dineroIngresar)
+                
 
             }
             
@@ -167,6 +206,9 @@ Elija una opcion a realizar:
 
             usuario = usuarios.find(
                 elemento => elemento.nCuenta == nCuentaBuscado)
+
+            movimientosUsuario = movimientos.find(
+                elemento => elemento.nCuenta == usuario.nCuenta).movimientos
             
             dineroIngresar = Number(prompt("Digite la cantidad de dinero a consignar: "))
 
@@ -182,6 +224,7 @@ Elija una opcion a realizar:
             if (window.confirm(confirmacion)) {
 
                 transaccion(usuario, dineroIngresar, retiro=false)
+                escrituraMovimientos(movimientosUsuario, tipoMovimiento, descripcionMovimiento, dineroIngresar)
 
             }
 
@@ -200,12 +243,19 @@ function retirarDinero() {
     let confirmacion = ``
 
     let usuario = 0
+    let movimientosUsuario = 0
     let dineroRetirar = 0
+
+    let tipoMovimiento = "Retiro dinero"
+    let descripcionMovimiento = "Retiro de dinero de la cuenta del usuario"
 
     const nCuentaBuscado = Number(prompt("Digite el numero de la cuenta: "))
     const claveBuscada = prompt("Digite la clave de la cuenta: ")
 
     usuario = autenticacion(nCuentaBuscado, claveBuscada)
+
+    movimientosUsuario = movimientos.find(
+        elemento => elemento.nCuenta == usuario.nCuenta).movimientos
 
     dineroRetirar = Number(prompt("Digite la cantidad de dinero a retirar: "))
 
@@ -221,6 +271,7 @@ function retirarDinero() {
     if (window.confirm(confirmacion)) {
 
         transaccion(usuario, dineroRetirar)
+        escrituraMovimientos(movimientosUsuario, tipoMovimiento, descripcionMovimiento, dineroRetirar)
 
     }
 
@@ -250,17 +301,25 @@ Elija una opcion a realizar:
     let dineroPago = 0
     let numeroReferencia = 0
     let servicio = ""
+    
+    let movimientosUsuario = 0
+    let tipoMovimiento = "Pago servicios"
+    let descripcionMovimiento = "Pago de servicios desde la cuenta del usuario"
 
     const nCuentaBuscado = Number(prompt("Digite el numero de la cuenta: "))
     const claveBuscada = prompt("Digite la clave de la cuenta: ")
 
     usuario = autenticacion(nCuentaBuscado, claveBuscada)
 
+    movimientosUsuario = movimientos.find(
+        elemento => elemento.nCuenta == usuario.nCuenta).movimientos
+
     switch(opcServicios){
         case 1:
             console.log("(1). Pago recibo de Energia")
 
             servicio = "Energia"
+            tipoMovimiento = "Pago factura Energia"
             dineroPago = Number(prompt("Digite la cantidad de dinero a pagar: "))
             numeroReferencia = Number(prompt("Digite el numero de referencia del servicio: "))
 
@@ -276,6 +335,7 @@ Elija una opcion a realizar:
             if (window.confirm(confirmacion)) {
 
                 transaccion(usuario, dineroPago)
+                escrituraMovimientos(movimientosUsuario, tipoMovimiento, descripcionMovimiento, dineroPago, numeroReferencia)
 
             }
             
@@ -284,6 +344,8 @@ Elija una opcion a realizar:
             console.log("(2). Pago recibo de Agua")
 
             servicio = "Agua"
+            tipoMovimiento = "Pago factura Agua"
+
             dineroPago = Number(prompt("Digite la cantidad de dinero a pagar: "))
             numeroReferencia = Number(prompt("Digite el numero de referencia del servicio: "))
 
@@ -299,6 +361,7 @@ Elija una opcion a realizar:
             if (window.confirm(confirmacion)) {
 
                 transaccion(usuario, dineroPago)
+                escrituraMovimientos(movimientosUsuario, tipoMovimiento, descripcionMovimiento, dineroPago, numeroReferencia)
 
             }
             
@@ -308,6 +371,8 @@ Elija una opcion a realizar:
             console.log("(3). Pago recibo de Gas")
 
             servicio = "Gas"
+            tipoMovimiento = "Pago factura Gas"
+
             dineroPago = Number(prompt("Digite la cantidad de dinero a pagar: "))
             numeroReferencia = Number(prompt("Digite el numero de referencia del servicio: "))
 
@@ -323,6 +388,7 @@ Elija una opcion a realizar:
             if (window.confirm(confirmacion)) {
 
                 transaccion(usuario, dineroPago)
+                escrituraMovimientos(movimientosUsuario, tipoMovimiento, descripcionMovimiento, dineroPago, numeroReferencia)
 
             }
             
@@ -345,6 +411,23 @@ function transaccion(usuario, dinero, retiro = true) {
 }
 
 
+function escrituraMovimientos(movimientosUsuario, tipoMovimiento, descripcionMovimiento, valor, referencia = null) {
+
+    if (referencia === null) {
+        referencia = Object.keys(movimientosUsuario).length + 1
+    }
+
+    movimientosUsuario.push(
+        {
+            tipoMovimiento: tipoMovimiento,
+            referencia: referencia,
+            descripcion: descripcionMovimiento,
+            valor: valor
+        }
+    )
+}
+
+
 
 function autenticacion(nCuenta, clave) {
 
@@ -352,6 +435,30 @@ function autenticacion(nCuenta, clave) {
         elemento => (elemento.nCuenta == nCuenta) && (elemento.clave == clave))
 
     return usuario
+
+}
+
+function mostrarMovimientos() {
+
+    let usuario = 0
+    let movimientosUsuario = 0
+
+    const nCuentaBuscado = Number(prompt("Digite el numero de la cuenta: "))
+    const claveBuscada = prompt("Digite la clave de la cuenta: ")
+
+    usuario = autenticacion(nCuentaBuscado, claveBuscada)
+
+    movimientosUsuario = movimientos.find(
+        elemento => elemento.nCuenta == usuario.nCuenta).movimientos
+
+    movimientosUsuario.forEach(function(movimiento) {
+        console.log(`
+Tipo: ${movimiento.tipoMovimiento}; Referencia: ${movimiento.referencia};
+descripcion: ${movimiento.descripcion};
+valor: ${movimiento.valor};
+---------------------------
+            `);
+        });
 
 }
 
