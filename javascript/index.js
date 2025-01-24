@@ -462,25 +462,55 @@ valor: ${movimiento.valor};
 
 }
 
-// // Funciones requeridas para leer y buscar usuario en un archivo json
+// // Abrir la conexión con la base de datos (o crearla si no existe)
+// const request = window.indexedDB.open("UsuariosDB", 1);
 
-// const username = prompt("Ingrese nombre de usuario a buscar: ")
+// // Configurar la estructura de la base de datos
+// request.onupgradeneeded = (event) => {
+//   const db = event.target.result;
 
-// const archivo = fetch("usuarios.json");
+//   // Crear un almacén de objetos llamado 'usuarios'
+//   const usuariosStore = db.createObjectStore("usuarios", { keyPath: "nCuenta", autoIncrement: true });
 
-// archivo.then( async response => {
-//     const data = await response.json()
-//     const usuario = data.find(
-//         elemento => elemento.nombre == username
-//     );
-//     console.log(usuario)
-// })
+//   // Crear índice para buscar por correo electrónico
+//   usuariosStore.createIndex("cedula", "cedula", { unique: true });
+// };
 
-// async function cargarData() {
-//     const archivo = await fetch("usuarios.json");
-//     const data = await archivo.json()
-//     const usuario = data.find(
-//         elemento => elemento.nombre == username
-//     );
-//     console.log(usuario)
-// }
+// // Manejar el éxito al abrir la conexión
+// request.onsuccess = (event) => {
+//   const db = event.target.result;
+
+//   // Función para agregar un usuario a la base de datos
+//   function agregarUsuario(cedula, nombre, clave, dinero) {
+//     const transaction = db.transaction(["usuarios"], "readwrite");
+//     const usuariosStore = transaction.objectStore("usuarios");
+
+//     // Agregar un nuevo usuario
+//     const nuevoUsuario = { cedula: cedula, nombre: nombre, clave: clave, dinero: dinero };
+//     const agregarRequest = usuariosStore.add(nuevoUsuario);
+
+//     agregarRequest.onsuccess = () => {
+//       console.log("Usuario agregado correctamente");
+//     };
+//   }
+
+//   // Función para obtener todos los usuarios de la base de datos
+//   function obtenerTodosLosUsuarios() {
+//     const transaction = db.transaction(["usuarios"], "readonly");
+//     const usuariosStore = transaction.objectStore("usuarios");
+
+//     // Obtener todos los usuarios
+//     const obtenerRequest = usuariosStore.getAll();
+
+//     obtenerRequest.onsuccess = () => {
+//       console.log("Todos los usuarios:",JSON.stringify(obtenerRequest.result, 4) );
+//     };
+//   }
+
+//   // Ejemplos de uso
+//   agregarUsuario("Juan Pérez", "juan@example.com");
+//   agregarUsuario("María Gómez", "maria@example.com");
+//   obtenerTodosLosUsuarios();
+
+// };
+  
