@@ -1,4 +1,111 @@
 
+// inicio base de datos
+
+var db;
+var dbName = "cajeroDB";
+
+// Abrir la conexión con la base de datos (o crearla si no existe)
+const request = window.indexedDB.open("UsuariosDB", 1);
+
+// Configurar la estructura de la base de datos
+request.onupgradeneeded = (event) => {
+  const db = event.target.result;
+
+  // Crear un almacén de objetos llamado 'usuarios'
+  const usuariosStore = db.createObjectStore("usuarios", { keyPath: "nCuenta", autoIncrement: true });
+
+  // Crear índice para buscar por correo electrónico
+  usuariosStore.createIndex("cedula", "cedula", { unique: true });
+};
+
+// Manejar el éxito al abrir la conexión
+request.onsuccess = (event) => {
+  const db = event.target.result;
+
+  // Función para agregar un usuario a la base de datos
+  function agregarUsuario(cedula, nombre, clave, dinero) {
+    const transaction = db.transaction(["usuarios"], "readwrite");
+    const usuariosStore = transaction.objectStore("usuarios");
+
+    // Agregar un nuevo usuario
+    const nuevoUsuario = { cedula: cedula, nombre: nombre, clave: clave, dinero: dinero };
+    const agregarRequest = usuariosStore.add(nuevoUsuario);
+
+    agregarRequest.onsuccess = () => {
+      console.log("Usuario agregado correctamente");
+    };
+  }
+
+  // Función para obtener todos los usuarios de la base de datos
+  function obtenerTodosLosUsuarios() {
+    const transaction = db.transaction(["usuarios"], "readonly");
+    const usuariosStore = transaction.objectStore("usuarios");
+
+    // Obtener todos los usuarios
+    const obtenerRequest = usuariosStore.getAll();
+
+    obtenerRequest.onsuccess = () => {
+      console.log("Todos los usuarios:",JSON.stringify(obtenerRequest.result, 4) );
+    };
+  }
+
+  // Ejemplos de uso
+  agregarUsuario("Juan Pérez", "juan@example.com");
+  agregarUsuario("María Gómez", "maria@example.com");
+  obtenerTodosLosUsuarios();
+
+};
+
+function iniciarBaseDatos(){
+    const request = indexedDB.open(dbName, 1);
+
+    request.onerror = (event) => {
+        console.error(`Database error: ${event.target.error?.message}`);
+    };
+
+    request.onsuccess = (event) => {
+        db = event.target.result;
+    };
+
+    request.onupgradeneeded = (event) => {
+    const db = event.target.result;
+
+    // Crear un almacén de objetos llamado 'usuarios'
+    const usuariosStore = db.createObjectStore("usuarios", { keyPath: "nCuenta", autoIncrement: true });
+
+    // Crear índice para buscar por numero de Documento
+    usuariosStore.createIndex("cedula", "cedula", { unique: true });
+
+    };
+}
+
+
+function agregarABaseDatos(){
+    const transaction = db.transaction(["usuarios"], "readwrite");
+    const usuariosStore = transaction.objectStore("usuarios");
+
+    // Do something when all the data is added to the database.
+    transaction.oncomplete = (event) => {
+        console.log("All done!");
+    };
+  
+    transaction.onerror = (event) => {
+        console.error(`Database error: ${event.target.error?.message}`);
+    };
+  
+    // Agregar un nuevo usuario
+    const nuevoUsuario = { cedula: cedula, nombre: nombre, clave: clave, dinero: dinero };
+    const agregarRequest = usuariosStore.add(nuevoUsuario);
+
+    agregarRequest.onsuccess = () => {
+      console.log("Usuario agregado correctamente");
+    };
+}
+
+
+
+
+
 // declaracion de objetos json para el manejo de usuarios y movimientos
 
 const usuarios = [
@@ -37,9 +144,11 @@ const movimientos = [
 
 // ]
 
+// Iniciando la base de datos
+iniciarBaseDatos()
 
 // menu de inicio
-do {
+function menuInicio() {
     const menu = `
 --------------------------------------------
 -------------MENU PRINCIPAL-----------------
@@ -109,7 +218,7 @@ Elija una opcion a realizar:
                 
         }
             
-    } while (opc !=0);
+    };
               
 function crearCuenta() {
     const nombre = prompt("ingrese su nombre: ")
@@ -461,56 +570,4 @@ valor: ${movimiento.valor};
         });
 
 }
-
-// // Abrir la conexión con la base de datos (o crearla si no existe)
-// const request = window.indexedDB.open("UsuariosDB", 1);
-
-// // Configurar la estructura de la base de datos
-// request.onupgradeneeded = (event) => {
-//   const db = event.target.result;
-
-//   // Crear un almacén de objetos llamado 'usuarios'
-//   const usuariosStore = db.createObjectStore("usuarios", { keyPath: "nCuenta", autoIncrement: true });
-
-//   // Crear índice para buscar por correo electrónico
-//   usuariosStore.createIndex("cedula", "cedula", { unique: true });
-// };
-
-// // Manejar el éxito al abrir la conexión
-// request.onsuccess = (event) => {
-//   const db = event.target.result;
-
-//   // Función para agregar un usuario a la base de datos
-//   function agregarUsuario(cedula, nombre, clave, dinero) {
-//     const transaction = db.transaction(["usuarios"], "readwrite");
-//     const usuariosStore = transaction.objectStore("usuarios");
-
-//     // Agregar un nuevo usuario
-//     const nuevoUsuario = { cedula: cedula, nombre: nombre, clave: clave, dinero: dinero };
-//     const agregarRequest = usuariosStore.add(nuevoUsuario);
-
-//     agregarRequest.onsuccess = () => {
-//       console.log("Usuario agregado correctamente");
-//     };
-//   }
-
-//   // Función para obtener todos los usuarios de la base de datos
-//   function obtenerTodosLosUsuarios() {
-//     const transaction = db.transaction(["usuarios"], "readonly");
-//     const usuariosStore = transaction.objectStore("usuarios");
-
-//     // Obtener todos los usuarios
-//     const obtenerRequest = usuariosStore.getAll();
-
-//     obtenerRequest.onsuccess = () => {
-//       console.log("Todos los usuarios:",JSON.stringify(obtenerRequest.result, 4) );
-//     };
-//   }
-
-//   // Ejemplos de uso
-//   agregarUsuario("Juan Pérez", "juan@example.com");
-//   agregarUsuario("María Gómez", "maria@example.com");
-//   obtenerTodosLosUsuarios();
-
-// };
   
