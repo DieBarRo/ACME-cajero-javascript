@@ -4,57 +4,74 @@
 var db;
 var dbName = "cajeroDB";
 
-// Abrir la conexión con la base de datos (o crearla si no existe)
-const request = window.indexedDB.open("UsuariosDB", 1);
+// Declaración de variables que contendran los datos
 
-// Configurar la estructura de la base de datos
-request.onupgradeneeded = (event) => {
-  const db = event.target.result;
+var usuarios = [
 
-  // Crear un almacén de objetos llamado 'usuarios'
-  const usuariosStore = db.createObjectStore("usuarios", { keyPath: "nCuenta", autoIncrement: true });
+]
 
-  // Crear índice para buscar por correo electrónico
-  usuariosStore.createIndex("cedula", "cedula", { unique: true });
-};
+var movimientos = [
 
-// Manejar el éxito al abrir la conexión
-request.onsuccess = (event) => {
-  const db = event.target.result;
+]
 
-  // Función para agregar un usuario a la base de datos
-  function agregarUsuario(cedula, nombre, clave, dinero) {
-    const transaction = db.transaction(["usuarios"], "readwrite");
-    const usuariosStore = transaction.objectStore("usuarios");
 
-    // Agregar un nuevo usuario
-    const nuevoUsuario = { cedula: cedula, nombre: nombre, clave: clave, dinero: dinero };
-    const agregarRequest = usuariosStore.add(nuevoUsuario);
+// Iniciando la base de datos
+iniciarBaseDatos()
+setTimeout(1000)
 
-    agregarRequest.onsuccess = () => {
-      console.log("Usuario agregado correctamente");
-    };
-  }
 
-  // Función para obtener todos los usuarios de la base de datos
-  function obtenerTodosLosUsuarios() {
-    const transaction = db.transaction(["usuarios"], "readonly");
-    const usuariosStore = transaction.objectStore("usuarios");
 
-    // Obtener todos los usuarios
-    const obtenerRequest = usuariosStore.getAll();
+// // Abrir la conexión con la base de datos (o crearla si no existe)
+// const request = window.indexedDB.open("UsuariosDB", 1);
 
-    obtenerRequest.onsuccess = () => {
-      console.log("Todos los usuarios:",JSON.stringify(obtenerRequest.result, 4) );
-    };
-  }
+// // Configurar la estructura de la base de datos
+// request.onupgradeneeded = (event) => {
+//     const db = event.target.result;
 
-  // Ejemplos de uso
-  agregarUsuario("Juan Pérez", "juan@example.com");
-  agregarUsuario("María Gómez", "maria@example.com");
-  obtenerTodosLosUsuarios();
+//     // Crear un almacén de objetos llamado 'usuarios'
+//     const usuariosStore = db.createObjectStore("usuarios", { keyPath: "nCuenta", autoIncrement: true });
 
-};
+//     // Crear índice para buscar por correo electrónico
+//     usuariosStore.createIndex("cedula", "cedula", { unique: true });
+// };
+
+// // Manejar el éxito al abrir la conexión
+// request.onsuccess = (event) => {
+//     const db = event.target.result;
+
+//     // Función para agregar un usuario a la base de datos
+//     function agregarUsuario(cedula, nombre, clave, dinero) {
+//     const transaction = db.transaction(["usuarios"], "readwrite");
+//     const usuariosStore = transaction.objectStore("usuarios");
+
+//     // Agregar un nuevo usuario
+//     const nuevoUsuario = { cedula: cedula, nombre: nombre, clave: clave, dinero: dinero };
+//     const agregarRequest = usuariosStore.add(nuevoUsuario);
+
+//     agregarRequest.onsuccess = () => {
+//         console.log("Usuario agregado correctamente");
+//     };
+//     }
+
+//   // Función para obtener todos los usuarios de la base de datos
+//   function obtenerTodosLosUsuarios() {
+//     const transaction = db.transaction(["usuarios"], "readonly");
+//     const usuariosStore = transaction.objectStore("usuarios");
+
+//     // Obtener todos los usuarios
+//     const obtenerRequest = usuariosStore.getAll();
+
+//     obtenerRequest.onsuccess = () => {
+//       console.log("Todos los usuarios:",JSON.stringify(obtenerRequest.result, 4) );
+//     };
+//   }
+
+//   // Ejemplos de uso
+//   agregarUsuario("Juan Pérez", "juan@example.com");
+//   agregarUsuario("María Gómez", "maria@example.com");
+//   obtenerTodosLosUsuarios();
+
+// };
 
 function iniciarBaseDatos(){
     const request = indexedDB.open(dbName, 1);
@@ -76,13 +93,19 @@ function iniciarBaseDatos(){
     // Crear índice para buscar por numero de Documento
     usuariosStore.createIndex("cedula", "cedula", { unique: true });
 
+    // Crear un almacén de objetos llamado 'movimientos'
+    const movimientosStore = db.createObjectStore("movimientos", { keyPath: "nCuenta", autoIncrement: true });
+
     };
 }
 
+// nuevoUsuario debe ser un objeto javascript de la forma:
+// const nuevoUsuario = { cedula: cedula, nombre: nombre, clave: clave, dinero: dinero };
 
-function agregarABaseDatos(){
-    const transaction = db.transaction(["usuarios"], "readwrite");
+function agregarUsuario(nuevoUsuario, movimientosUsuario){
+    const transaction = db.transaction(["usuarios", "movimientos"], "readwrite");
     const usuariosStore = transaction.objectStore("usuarios");
+    const movimientosStore = transaction.objectStore("movimientos");
 
     // Do something when all the data is added to the database.
     transaction.oncomplete = (event) => {
@@ -94,58 +117,103 @@ function agregarABaseDatos(){
     };
   
     // Agregar un nuevo usuario
-    const nuevoUsuario = { cedula: cedula, nombre: nombre, clave: clave, dinero: dinero };
     const agregarRequest = usuariosStore.add(nuevoUsuario);
 
     agregarRequest.onsuccess = () => {
       console.log("Usuario agregado correctamente");
     };
+
+    // Agregar un nuevo usuario
+    const movimientoRequest = movimientosStore.add(movimientosUsuario);
+    
+    movimientoRequest.onsuccess = () => {
+      console.log("Movimientos usuario agregado correctamente");
+    };
+}
+
+// Función para obtener todos los usuarios de la base de datos
+function obtenerUsuarios() {
+const transaction = db.transaction(["usuarios", "movimientos"], "readonly");
+const usuariosStore = transaction.objectStore("usuarios");
+const movimientosStore = transaction.objectStore("movimientos");
+
+// Obtener todos los usuarios
+const obtenerUsuarios = usuariosStore.getAll();
+
+
+obtenerUsuarios.onsuccess = () => {
+    usuarios = JSON.stringify(obtenerUsuarios.result, 4)
+    console.log("Todos los usuarios:", usuarios );
+    
+};
+
+// Obtener todos los movimientos
+const obtenerMovimientos = movimientosStore.getAll();
+
+obtenerMovimientos.onsuccess = () => {
+
+    movimientos = JSON.stringify(obtenerMovimientos.result, 4)
+    console.log("Todos los movimientos:", movimientos );
+
+};
 }
 
 
+function actualizarUsuario(usuariosActualizar) {
+    const objectStore = db
+    .transaction(["customers"], "readwrite")
+    .objectStore("customers");
+
+    // Put this updated object back into the database.
+    const requestUpdate = objectStore.put(usuariosActualizar);
+    requestUpdate.onerror = (event) => {
+        console.error(`Database error: ${event.target.error?.message}`);
+    };
+    requestUpdate.onsuccess = (event) => {
+        console.log("Data is updated")
+    };
+    
+}
 
 
 
 // declaracion de objetos json para el manejo de usuarios y movimientos
 
-const usuarios = [
-    {   
-        cedula: "1010",
-        nombre: "diego",
-        clave: "123",
-        nCuenta: 1,
-        dinero: 0,
-    },
-    {   
-        cedula: "2020",
-        nombre: "felipe",
-        clave: "456",
-        nCuenta: 2,
-        dinero: 0,
-    },
-]
-
 // const usuarios = [
-
+//     {   
+//         cedula: "1010",
+//         nombre: "diego",
+//         clave: "123",
+//         nCuenta: 1,
+//         dinero: 0,
+//     },
+//     {   
+//         cedula: "2020",
+//         nombre: "felipe",
+//         clave: "456",
+//         nCuenta: 2,
+//         dinero: 0,
+//     },
 // ]
 
-const movimientos = [
-    {
-        nCuenta: 1,
-        movimientos: []
-    },
-    {
-        nCuenta: 2,
-        movimientos: []
-    }
-]
+
 
 // const movimientos = [
-
+//     {
+//         nCuenta: 1,
+//         movimientos: []
+//     },
+//     {
+//         nCuenta: 2,
+//         movimientos: []
+//     }
 // ]
 
-// Iniciando la base de datos
-iniciarBaseDatos()
+function funcioncita() {
+    obtenerUsuarios()
+    menuInicio()
+}
+
 
 // menu de inicio
 function menuInicio() {
@@ -179,6 +247,9 @@ Elija una opcion a realizar:
             break
         case 2:
             console.log("(2). Consignar dinero a una cuenta")
+            obtenerUsuarios()
+            console.log(db)
+            console.log(usuarios, movimientos)
             consignarDinero()
 
             // jsonObj = JSON.stringify(usuarios, 4)
@@ -236,18 +307,21 @@ function crearCuenta() {
 
     if (window.confirm(confirmacion)) {
 
-        usuarios.push({
+        const nuevoUsuario = {
             cedula: cedula,
             nombre: nombre,
             clave: clave,
-            nCuenta: nCuenta,
+            // nCuenta: nCuenta,
             dinero: 0,
-        })
-        
-        movimientos.push({
-            nCuenta: nCuenta,
+        }
+
+        const movimientosUsuario = {
+            // nCuenta: nCuenta,
             movimientos: [],
-        })
+        }
+
+        agregarUsuario(nuevoUsuario, movimientosUsuario)
+
     }
 
 }
@@ -315,6 +389,11 @@ Elija una opcion a realizar:
 
             usuario = usuarios.find(
                 elemento => elemento.nCuenta == nCuentaBuscado)
+            
+            console.log(usuarios)    
+            console.log(movimientos.find(
+                elemento => elemento.nCuenta == usuario.nCuenta
+            ))
 
             movimientosUsuario = movimientos.find(
                 elemento => elemento.nCuenta == usuario.nCuenta).movimientos
@@ -362,6 +441,7 @@ function retirarDinero() {
     const claveBuscada = prompt("Digite la clave de la cuenta: ")
 
     usuario = autenticacion(nCuentaBuscado, claveBuscada)
+
 
     movimientosUsuario = movimientos.find(
         elemento => elemento.nCuenta == usuario.nCuenta).movimientos
@@ -517,6 +597,8 @@ function transaccion(usuario, dinero, retiro = true) {
     } else {
         usuario.dinero += dinero
     }
+
+    actualizarUsuario(usuario)
 }
 
 
