@@ -1,25 +1,21 @@
 
 // inicio base de datos
 
-var db;
+// var db;
 var dbName = "cajeroDB";
 
 // Declaración de variables que contendran los datos
 
-var usuarios = [
+var usuarios = []
+var movimientos = []
 
-]
-
-var movimientos = [
-
-]
-
+console.log("Antes de abrir base de datos", usuarios, movimientos)
 
 // Iniciando la base de datos
-iniciarBaseDatos()
-setTimeout(1000)
+usuarios = iniciarBaseDatos()
 
 
+console.log("Despues de abrir base de datos", usuarios, movimientos)
 
 // // Abrir la conexión con la base de datos (o crearla si no existe)
 // const request = window.indexedDB.open("UsuariosDB", 1);
@@ -75,13 +71,32 @@ setTimeout(1000)
 
 function iniciarBaseDatos(){
     const request = indexedDB.open(dbName, 1);
-
     request.onerror = (event) => {
         console.error(`Database error: ${event.target.error?.message}`);
     };
 
     request.onsuccess = (event) => {
-        db = event.target.result;
+        const db = event.target.result;
+        const transaction = db.transaction(["usuarios", "movimientos"], "readonly");
+        const usuariosStore = transaction.objectStore("usuarios");
+        const movimientosStore = transaction.objectStore("movimientos");
+        
+        // Obtener todos los usuarios
+        const obtenerUsuarios = usuariosStore.getAll();
+        obtenerUsuarios.onsuccess = () => {
+            usuarios = JSON.stringify(obtenerUsuarios.result, 4)
+            console.log("Todos los usuarios:", usuarios );
+        };
+        
+        // Obtener todos los movimientos
+        const obtenerMovimientos = movimientosStore.getAll();
+        obtenerMovimientos.onsuccess = () => {
+            movimientos = JSON.stringify(obtenerMovimientos.result, 4)
+            console.log("Todos los movimientos:", movimientos );
+        };
+
+        return("hola")
+            
     };
 
     request.onupgradeneeded = (event) => {
@@ -90,44 +105,53 @@ function iniciarBaseDatos(){
     // Crear un almacén de objetos llamado 'usuarios'
     const usuariosStore = db.createObjectStore("usuarios", { keyPath: "nCuenta", autoIncrement: true });
 
-    // Crear índice para buscar por numero de Documento
+    // Crear índice para buscar usuarios por numero de Documento
     usuariosStore.createIndex("cedula", "cedula", { unique: true });
 
     // Crear un almacén de objetos llamado 'movimientos'
     const movimientosStore = db.createObjectStore("movimientos", { keyPath: "nCuenta", autoIncrement: true });
 
     };
+    
 }
 
 // nuevoUsuario debe ser un objeto javascript de la forma:
 // const nuevoUsuario = { cedula: cedula, nombre: nombre, clave: clave, dinero: dinero };
 
 function agregarUsuario(nuevoUsuario, movimientosUsuario){
-    const transaction = db.transaction(["usuarios", "movimientos"], "readwrite");
-    const usuariosStore = transaction.objectStore("usuarios");
-    const movimientosStore = transaction.objectStore("movimientos");
-
-    // Do something when all the data is added to the database.
-    transaction.oncomplete = (event) => {
-        console.log("All done!");
-    };
-  
-    transaction.onerror = (event) => {
+    const request = indexedDB.open(dbName, 1);
+    request.onerror = (event) => {
         console.error(`Database error: ${event.target.error?.message}`);
     };
-  
-    // Agregar un nuevo usuario
-    const agregarRequest = usuariosStore.add(nuevoUsuario);
-
-    agregarRequest.onsuccess = () => {
-      console.log("Usuario agregado correctamente");
-    };
-
-    // Agregar un nuevo usuario
-    const movimientoRequest = movimientosStore.add(movimientosUsuario);
+    request.onsuccess = (event) => {
+        const db = event.target.result;
+        const transaction = db.transaction(["usuarios", "movimientos"], "readwrite");
+        const usuariosStore = transaction.objectStore("usuarios");
+        const movimientosStore = transaction.objectStore("movimientos");
     
-    movimientoRequest.onsuccess = () => {
-      console.log("Movimientos usuario agregado correctamente");
+        // Do something when all the data is added to the database.
+        transaction.oncomplete = (event) => {
+            console.log("All done!");
+        };
+      
+        transaction.onerror = (event) => {
+            console.error(`Database error: ${event.target.error?.message}`);
+        };
+      
+        // Agregar un nuevo usuario
+        const agregarRequest = usuariosStore.add(nuevoUsuario);
+    
+        agregarRequest.onsuccess = () => {
+          console.log("Usuario agregado correctamente");
+        };
+    
+        // Agregar un nuevo usuario
+        const movimientoRequest = movimientosStore.add(movimientosUsuario);
+        
+        movimientoRequest.onsuccess = () => {
+          console.log("Movimientos usuario agregado correctamente");
+        };
+        return usuarios
     };
 }
 
@@ -209,10 +233,6 @@ function actualizarUsuario(usuariosActualizar) {
 //     }
 // ]
 
-function funcioncita() {
-    obtenerUsuarios()
-    menuInicio()
-}
 
 
 // menu de inicio
@@ -239,7 +259,9 @@ Elija una opcion a realizar:
     switch(opc){
         case 1:
             console.log("(1). Crear una cuenta bancaria")
+            console.log("Despues de seleccionar opcion 1", usuarios, movimientos)
             crearCuenta()
+            console.log("Despues de crear nueva cuenta", usuarios, movimientos)
 
             // jsonObj = JSON.stringify(usuarios, 4)
             // jsonMovimientos = JSON.stringify(movimientos, 4)
@@ -320,7 +342,7 @@ function crearCuenta() {
             movimientos: [],
         }
 
-        agregarUsuario(nuevoUsuario, movimientosUsuario)
+        usuarios = agregarUsuario(nuevoUsuario, movimientosUsuario)
 
     }
 
